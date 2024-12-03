@@ -8,45 +8,67 @@
 
 import Algorithms
 
-struct Day01: AdventDay {
+struct Day02: AdventDay {
   // Save your data in a corresponding text file in the `Data` directory.
   var data: String
 
-  // Two integers per line, the first represents the location IDs from
-  // the first group of historians, and the second represents the location IDs
-  // from the second group of historians.
-  var entities: (first: [Int], second: [Int]) {
-    let tupleArr = data.split(separator: "\n").map {
-      let components = $0.split(separator: " ", omittingEmptySubsequences: true)
-      return (Int(components[0]) ?? -1, Int(components[1]) ?? -1)
+  // Each line contains any number of reports separated by spaces
+  var entities: [[Int]] {
+    data.split(separator: "\n", omittingEmptySubsequences: true).map {
+      $0.split(separator: " ", omittingEmptySubsequences: true).compactMap { Int($0) }
     }
-    var result: (first: [Int], second: [Int]) = ([Int](), [Int]())
-    for tupleItem in tupleArr {
-      result.first.append(tupleItem.0)
-      result.second.append(tupleItem.1)
+  }
+  
+  func testReport(report: [Int]) -> Bool {
+    enum testDirection {
+      case increasing, decreasing
     }
-    return result
+    
+    // Return true if the report is safe
+    var previous: Int?
+    var direction: testDirection?
+
+    
+    for element in report {
+      if let previous {
+        let diff = abs(element - previous)
+        
+        if diff < 1 || diff > 3 { return false }
+        
+        if let direction {
+          if direction == .increasing {
+            if element <= previous { return false }
+          } else {
+            if element >= previous { return false }
+          }
+        } else {
+          direction = element > previous ? .increasing : .decreasing
+        }
+      }
+      previous = element
+    }
+    
+    return true
   }
 
   func part1() -> Any {
-    // Sort each array independently
-    let sortedEntities: (first: [Int], second: [Int]) = (entities.first.sorted(), entities.second.sorted())
-    
-    // Iterate and sum the differences
-    var totalDistance = 0
-    for (index, element) in sortedEntities.first.enumerated() {
-      let distance = abs(element - sortedEntities.second[index])
-      totalDistance += distance
-    }
-    return totalDistance
+    // Return the count of reports that are considered safe
+    return entities.filter({ report in
+      testReport(report: report)
+    }).count
   }
 
   func part2() -> Any {
-    var similarityScore = 0
-    for element in entities.first {
-      let count = entities.second.filter({ $0 == element }).count
-      similarityScore += element * count
-    }
-    return similarityScore
+    // Return the count of reports that are considered safe,
+    // allowing for a single report to be removed
+    return entities.filter({ report in
+      if testReport(report: report) == true { return true }
+      for idx in 0..<report.count {
+        var alteredReport = report
+        alteredReport.remove(at: idx)
+        if testReport(report: alteredReport) == true { return true }
+      }
+      return false
+    }).count
   }
 }
