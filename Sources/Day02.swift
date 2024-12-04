@@ -1,11 +1,3 @@
-//
-//  Day01 2.swift
-//  AdventOfCode
-//
-//  Created by Brian Bauer on 12/2/24.
-//
-
-
 import Algorithms
 
 struct Day02: AdventDay {
