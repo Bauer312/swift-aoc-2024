@@ -1,11 +1,3 @@
-//
-//  Day02Tests.swift
-//  AdventOfCode
-//
-//  Created by Brian Bauer on 12/2/24.
-//
-
-
 import Testing
 
 @testable import AdventOfCode
