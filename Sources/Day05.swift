@@ -33,7 +33,7 @@ struct Day05: AdventDay {
   func reorderUpdate(update: [Int], orderingRules: [(Int,Int)]) -> [Int] {
     var newArr = update
     // Make sure this doesn't run forever
-    for failsafe in 0..<25 {
+    for _ in 0..<25 {
       for idx in 0..<(update.count-1) {
         // If 0 must be after 1, swap them
         for rule in orderingRules {
